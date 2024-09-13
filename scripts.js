@@ -1,41 +1,49 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Smooth Scrolling
-    const scrollLinks = document.querySelectorAll('nav a[href^="#"]');
-    scrollLinks.forEach(link => {
-        link.addEventListener('click', function(event) {
-            event.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
-            const targetElement = document.getElementById(targetId);
-            targetElement.scrollIntoView({ behavior: 'smooth' });
-        });
+// toggle icon navbar
+let menuIcon = document.querySelector('#menu-icon');
+let navbar = document.querySelector('.navbar');
+
+menuIcon.onclick = () => {
+    menuIcon.classList.toggle('bx-x');
+    navbar.classList.toggle('active');
+}
+
+// scroll sections
+let sections = document.querySelectorAll('section');
+let navLinks = document.querySelectorAll('header nav a');
+
+window.onscroll = () => {
+    sections.forEach(sec => {
+        let top = window.scrollY;
+        let offset = sec.offsetTop - 100;
+        let height = sec.offsetHeight;
+        let id = sec.getAttribute('id');
+
+        if(top >= offset && top < offset + height) {
+            // active navbar links
+            navLinks.forEach(links => {
+                links.classList.remove('active');
+                document.querySelector('header nav a[href*=' + id + ']').classList.add('active');
+            });
+            // active sections for animation on scroll
+            sec.classList.add('show-animate');
+        }
+        // if want to animation that repeats on scroll use this
+        else {
+            sec.classList.remove('show-animate');
+        }
     });
 
-    // Lightbox Gallery
-    const portfolioItems = document.querySelectorAll('.portfolio-item img');
-    portfolioItems.forEach(img => {
-        img.addEventListener('click', function() {
-            const lightbox = document.createElement('div');
-            lightbox.className = 'lightbox';
-            lightbox.innerHTML = `
-                <div class="lightbox-content">
-                    <span class="close">&times;</span>
-                    <img src="${this.src}" alt="${this.alt}">
-                </div>
-            `;
-            document.body.appendChild(lightbox);
+    // sticky navbar
+    let header = document.querySelector('header');
 
-            // Close lightbox on click
-            const closeBtn = lightbox.querySelector('.close');
-            closeBtn.addEventListener('click', function() {
-                document.body.removeChild(lightbox);
-            });
+    header.classList.toggle('sticky', window.scrollY > 100);
 
-            // Close lightbox on click outside image
-            lightbox.addEventListener('click', function(event) {
-                if (event.target === lightbox) {
-                    document.body.removeChild(lightbox);
-                }
-            });
-        });
-    });
-});
+    // remove toggle icon and navbar when click navbar links (scroll)
+    menuIcon.classList.remove('bx-x');
+    navbar.classList.remove('active');
+
+    // animation footer on scroll
+    let footer = document.querySelector('footer');
+
+    footer.classList.toggle('show-animate', this.innerHeight + this.scrollY >= document.scrollingElement.scrollHeight);
+}
